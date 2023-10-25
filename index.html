@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Survey Form with Country Dropdown</title>
+    <style>
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            background-color: aquamarine;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 89vh;
+        }
+
+        form {
+            background-color: white;
+            width: fit-content;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            border: 2px solid #ccc;
+        }
+
+        input {
+            padding: 10px;
+            margin: 2px;
+            border-radius: 5px;
+            border: 1px solid;
+        }
+
+        select {
+            padding: 10px;
+            width: 50%;
+        }
+
+        button {
+            padding: 5px;
+            margin: 5px;
+        }
+        .btn{
+            display: flex;
+            justify-content: center;
+            padding: 5px;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <h2>Customer Survey Form</h2>
+    <form id="surveyForm">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" required><br>
+
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" required><br>
+
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required><br>
+
+        <label for="country">Country:</label>
+        <select id="country" name="country" required>
+            <option selected>Select Country</option>
+        </select><br>
+
+        <label>Gender:</label>
+        <input type="checkbox" id="male" name="gender" value="Male">
+        <label for="male">Male</label>
+        <input type="checkbox" id="female" name="gender" value="Female">
+        <label for="female">Female</label><br>
+
+        <label for="profession">Profession:</label>
+        <input type="text" id="profession" name="profession" required><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
+
+        <label for="mobile">Mobile Number:</label>
+        <input type="tel" id="mobile" name="mobile" required><br>
+
+        <div class="btn">
+            <button style="background-color: rgb(13, 197, 13); font-size: 15px; border: 1px solid;padding: 5px; border-radius: 5px;" type="button" onclick="validateForm()">Submit</button>
+            <button style="background-color: red; border: 1px solid; font-size: 15px; padding: 5px; border-radius: 5px;" type="button" onclick="resetForm()">Reset</button>
+        </div>
+    </form>
+
+    <div id="popup" class="popup">
+        <h2>Survey Results</h2>
+        <div id="results"></div>
+        <button style="background-color: red;border: 1px solid;padding: 5px; border-radius: 5px;" onclick="closePopup()">Close</button>
+    </div>
+
+    <script>
+        // Function to populate the country dropdown using the Rest Countries API
+        function populateCountryDropdown() {
+            const countrySelect = document.getElementById("country");
+            fetch("https://restcountries.com/v3.1/all")
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(country => {
+                        const option = document.createElement("option");
+                        option.value = country.name.common;
+                        option.text = country.name.common;
+                        countrySelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Error fetching countries: " + error));
+        }
+
+        // Call the function to populate the country dropdown
+        populateCountryDropdown();
+
+        function validateForm() {
+            // Get references to form elements
+            const firstName = document.getElementById("firstName");
+            const lastName = document.getElementById("lastName");
+            const dob = document.getElementById("dob");
+            const country = document.getElementById("country");
+            const profession = document.getElementById("profession");
+            const email = document.getElementById("email");
+            const mobile = document.getElementById("mobile");
+
+            // Validate each field
+            if (firstName.value === "") {
+                alert("First Name is required.");
+                return;
+            }
+            if (lastName.value === "") {
+                alert("Last Name is required.");
+                return;
+            }
+            if (dob.value === "") {
+                alert("Date of Birth is required.");
+                return;
+            }
+            if (country.value === "Select Country") {
+                alert("Please select a Country.");
+                return;
+            }
+            if (profession.value === "") {
+                alert("Profession is required.");
+                return;
+            }
+            if (email.value === "") {
+                alert("Email is required.");
+                return;
+            }
+            if (mobile.value === "") {
+                alert("Mobile Number is required.");
+                return;
+            }
+
+            // Your additional validation logic can go here
+
+            // Display results in the popup
+            const results = document.getElementById("results");
+            results.innerHTML = `
+                First Name: ${firstName.value}<br>
+                Last Name: ${lastName.value}<br>
+                Date of Birth: ${dob.value}<br>
+                Country: ${country.value}<br>
+                Profession: ${profession.value}<br>
+                Email: ${email.value}<br>
+                Mobile Number: ${mobile.value}<br>
+            `;
+
+            // Show the popup
+            document.getElementById("popup").style.display = "block";
+        }
+
+        function resetForm() {
+            document.getElementById("surveyForm").reset();
+        }
+
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+            resetForm();
+        }
+    </script>
+</body>
+
+</html>
